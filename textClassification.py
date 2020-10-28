@@ -264,6 +264,8 @@ codalab_data = pd.read_csv('trial_data.csv')
 test_data_codalab = codalab_data.iloc[:, 1].values
 test_labels_codalab = codalab_data.iloc[:,2].values
 
+y_pred = model.predict_classes(X)
+
 results_codalab = model.evaluate(test_data_codalab, test_labels_codalab)
 
 print("*******CODALAB************",results_codalab) 

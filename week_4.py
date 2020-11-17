@@ -1,19 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
 
-
-#pip install tensorflow
-
-
-# In[ ]:
-
-
-#pip install tensorflow_hub
-
-
-# In[ ]:
+# In[1]:
 
 
 import tensorflow as tf
@@ -30,31 +19,29 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
 
-# In[ ]:
+# In[2]:
 
 
-#ls
+dataset = pd.read_csv('Codalab-train-dataset.csv')
+X = dataset.iloc[:, 1].values
+Y = dataset.iloc[:,2].values
+test_dataset = pd.read_csv('test.csv')
+test_data_X = test_dataset.iloc[:, 1].values
+test_data_Y= test_dataset.iloc[:, 2].values
 
 
-# In[ ]:
+# In[3]:
 
 
-dataset = pd.read_csv('Kaggle-dataset.csv')
-X = dataset.iloc[:, 0].values
-Y = dataset.iloc[:,1].values
+# label_encoder_Y = LabelEncoder()
+# Y = label_encoder_Y.fit_transform(Y)
+# len(X)
 
 
-# In[ ]:
+# In[4]:
 
 
-label_encoder_Y = LabelEncoder()
-Y = label_encoder_Y.fit_transform(Y)
-
-
-# In[ ]:
-
-
-train_examples, test_examples, train_labels, test_labels = train_test_split(X,Y, test_size=0.1,random_state=0)
+train_examples, test_examples, train_labels, test_labels = train_test_split(X,Y, test_size=0.2,random_state=0)
 print("Training entries: {}, test entries: {}".format(len(train_examples), len(test_examples)))
 print("TRAIN Dataset -> ")
 print(train_examples[:10])
@@ -82,7 +69,7 @@ print(train_labels[:10])
 # Let's first create a Keras layer that uses a TensorFlow Hub model to embed the sentences, and try it out on a couple of input examples. Note that the output shape of the produced embeddings is a expected: `(num_examples, embedding_dimension)`.
 # 
 
-# In[ ]:
+# In[5]:
 
 
 model = "https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1"
@@ -93,12 +80,13 @@ hub_layer(train_examples[:3])
 
 # <font color="green">Let's now build the full model: </font>
 
-# In[ ]:
+# In[6]:
 
 
 model = tf.keras.Sequential()
 model.add(hub_layer)
-model.add(tf.keras.layers.Dense(16, activation='relu'))
+model.add(tf.keras.layers.Dense(16, activation='sigmoid'))
+model.add(tf.keras.layers.Dense(16, activation='sigmoid'))
 model.add(tf.keras.layers.Dense(1))
 model.summary()
 
@@ -126,7 +114,7 @@ model.summary()
 #  
 # <font color="green">Now, configure the model to use an optimizer and a loss function: </font>
 
-# In[ ]:
+# In[7]:
 
 
 model.compile(optimizer='adam',
@@ -140,20 +128,22 @@ model.compile(optimizer='adam',
 # Create a *validation set* by setting apart 10,000 examples from the original training data. <br> 
 # (Why not use the testing set now? Our goal is to develop and tune our model using only the training data, then use the test data just once to evaluate our accuracy).
 
-# In[ ]:
+# In[8]:
 
 
-x_val = train_examples[:20000]
-partial_x_train = train_examples[20000:]
+len(X)
+x_val = train_examples[:2500]
+partial_x_train = train_examples[1500:]
 
-y_val = train_labels[:20000]
-partial_y_train = train_labels[20000:]
+y_val = train_labels[:2500]
+partial_y_train = train_labels[1500:]
+len(partial_x_train)
 
 
 # <font color="green">Train the model </font> <br>
 # Train the model for 40 epochs in mini-batches of 512 samples. This is 40 iterations over all samples in the `x_train` and `y_train` tensors. While training, monitor the model's loss and accuracy on the 10,000 samples from the validation set:
 
-# In[ ]:
+# In[9]:
 
 
 history = model.fit(partial_x_train,
@@ -169,43 +159,33 @@ history = model.fit(partial_x_train,
 # -> Loss (a number which represents our error, lower values are better), and <br>
 # -> accuracy.
 
-# In[ ]:
+# In[13]:
+
 
 
 results = model.evaluate(test_examples, test_labels)
+print("*******CODALAB************",results)
+y_pred = model.predict_classes(test_examples)
+print("length of y_pred", len(y_pred))
+print(y_pred)
 
-print("*******KAGGLE************",results)
-
-
-# In[ ]:
-
-
-codalab_data = pd.read_csv('Codalab-trial-dataset.csv')
-test_data_codalab = codalab_data.iloc[:, 1].values
-test_labels_codalab = codalab_data.iloc[:,2].values
-
-results_codalab = model.evaluate(test_data_codalab, test_labels_codalab)
-
-print("*******CODALAB************",results_codalab) 
-
-
-# # need to change
-# This fairly naive approach achieves an accuracy of about 87%. With more advanced approaches, the model should get closer to 95%.<br>
+# 
+# This fairly naive approach achieves an accuracy of about 85%. With more advanced approaches, the model should get closer to 95%.<br>
 # 
 # Create a graph of accuracy and loss over time<br>
 # `model.fit()` returns a `History` object that contains a dictionary with everything that happened during training:
 
-# In[ ]:
+# In[11]:
 
 
 history_dict = history.history
 history_dict.keys()
 
 
-# # need to change
+# 
 # There are four entries: one for each monitored metric during training and validation. We can use these to plot the training and validation loss for comparison, as well as the training and validation accuracy:
 
-# In[ ]:
+# In[17]:
 
 
 acc = history_dict['accuracy']
@@ -216,7 +196,7 @@ val_loss = history_dict['val_loss']
 epochs = range(1, len(acc) + 1)
 
 
-# In[ ]:
+# In[18]:
 
 
 # "bo" is for "blue dot"
@@ -231,7 +211,7 @@ plt.legend()
 plt.show()
 
 
-# In[ ]:
+# In[19]:
 
 
 plt.clf()   # clear figure
@@ -255,35 +235,16 @@ plt.show()
 # 
 # For this particular case, we could prevent overfitting by simply stopping the training after twenty or so epochs. Later, you'll see how to do this automatically with a callback.
 
-# In[28]:
+# In[26]:
 
-
-codalab_data.columns
-
-
-# In[67]:
-
-
-import pandas as pd
 
 codalab_data = pd.read_csv('Codalab-train-dataset.csv')
-print(codalab_data.head())
 
 
-# In[68]:
+# In[26]:
 
 
-# from sklearn.impute import SimpleImputer 
-# constant_imputer=SimpleImputer(strategy='median')
-# codalab_data.iloc[:,2:24]=constant_imputer.fit_transform(codalab_data.iloc[:,2:24])
-# #x_array = np.array(codalab_data['funniness_all'])
-# #normalized_X = preprocessing.normalize([x_array])
-# print(codalab_data.isnull().sum())
-
-
-# In[21]:
-
-
+# MOST FREQUESNT
 from sklearn.impute import SimpleImputer 
 constant_imputer=SimpleImputer(strategy='most_frequent')
 codalab_data.iloc[:,:]=constant_imputer.fit_transform(codalab_data)
@@ -292,92 +253,163 @@ codalab_data.iloc[:,:]=constant_imputer.fit_transform(codalab_data)
 print(codalab_data.isnull().sum())
 
 
-# In[29]:
+# In[27]:
 
 
-# from sklearn.impute import SimpleImputer 
-# constant_imputer=SimpleImputer(strategy='constant', fill_value=0)
-# codalab_data.iloc[:,:]=constant_imputer.fit_transform(codalab_data)
-# #x_array = np.array(codalab_data['funniness_all'])
-# #normalized_X = preprocessing.normalize([x_array])
-# print(codalab_data.isnull().sum())
+# COnstant, have used this
+from sklearn.impute import SimpleImputer 
+constant_imputer=SimpleImputer(strategy='constant', fill_value=0)
+codalab_data.iloc[:,:]=constant_imputer.fit_transform(codalab_data)
+#x_array = np.array(codalab_data['funniness_all'])
+#normalized_X = preprocessing.normalize([x_array])
+print(codalab_data.isnull().sum())
 
 
-# In[72]:
+# In[24]:
 
 
-from sklearn.model_selection import KFold
-from sklearn.model_selection import cross_val_score
+# ignored this
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import mean_squared_error
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
+from sklearn.feature_selection import RFE
 
-X = codalab_data.iloc[:, 3:6].values
-Y = codalab_data.iloc[:,2].values
-label_encoder_Y = LabelEncoder()
-Y = label_encoder_Y.fit_transform(Y)
-
-kfold = KFold(n_splits=5, random_state=1215,shuffle=True)
+cols = ['humor_rating', 'humor_controversy'] 
+new_cols = ['is_humor']
+X = codalab_data[cols]
+y = codalab_data[new_cols]
+# Build a logreg and compute the feature importances
 model = LogisticRegression()
-results = cross_val_score(model, X, Y, cv=kfold,scoring='accuracy')
-print("Logistic Regression")
-print("Accuracy in each split:",results)
-print("Accuracy:", results.mean())
-print("Accuracy: %.3f%% (%.3f%%)" % (results.mean()*100.0, results.std()*100.0))
+# create the RFE model and select 8 attributes
+rfe = RFE(model, 8)
+rfe = rfe.fit(X, y)
+# summarize the selection of the attributes
+print('Selected features: %s' % list(X.columns[rfe.support_]))
+X=codalab_data[X.columns[rfe.support_]]
+print(X.head())
 
 
+# In[28]:
 
 
+cols = ['humor_rating', 'humor_controversy'] 
+new_cols = ['is_humor']
+X = codalab_data[cols]
+y = codalab_data[new_cols]
+X_temp,X_test,y_temp,y_test=train_test_split(X,y,test_size=0.2,random_state=1111)
+train_examples, test_examples, train_labels, test_labels = train_test_split(X_temp,y_temp, test_size=0.1,random_state=0)
+print("Training entries: {}, test entries: {}".format(len(train_examples), len(test_examples)))
+print("TRAIN Dataset -> ")
+print(train_examples[:10])
+print(" Test Dataset ->")
+print(train_labels[:20])
 
 
+# In[30]:
 
-# In[77]:
 
-
-from sklearn.model_selection import KFold
+#Used most_frequent strategy
 from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import mean_squared_error
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-import numpy as np
-
-X = codalab_data.iloc[:, 3:6].values
-Y = codalab_data.iloc[:,2].values
-label_encoder_Y = LabelEncoder()
-Y = label_encoder_Y.fit_transform(Y)
-
-kf=KFold(n_splits=10,random_state=1015,shuffle=True)
-splits=kf.split(X)
-
-rfr = RandomForestRegressor(n_estimators=25)
-scores=[]
-for train_index, test_index in splits:
-    X_train, y_train = X[train_index], Y[train_index]
-    X_test, y_test = X[test_index], Y[test_index]
-
-    rfr.fit(X_train, y_train)
-    predictions = rfr.predict(X_test)
-    print("Random Forest")
-    print("Mean squared error: " + str(mean_squared_error(y_test, predictions)))
-    scores.append((rfr.score(X_test, y_test)))
-print("Accuracy:",np.mean(scores))
-    
+logreg = LogisticRegression(random_state=101)
+# Use cross_val_score function
+# We are passing the entirety of X and y, not X_train or y_train, it takes care of splitting the data
+# cv=10 for 10 folds
+# scoring = {'accuracy', 'neg_log_loss', 'roc_auc'} for evaluation metric - althought they are many
+scores_accuracy = cross_val_score(logreg, X, y, cv=10, scoring='accuracy')
+scores_log_loss = cross_val_score(logreg, X, y, cv=10, scoring='neg_log_loss')
+scores_auc = cross_val_score(logreg, X, y, cv=10, scoring='roc_auc')
+print('K-fold cross-validation results:')
+print(scores_accuracy)
+print(logreg.__class__.__name__+" average accuracy is %2.3f" % scores_accuracy.mean())
+print(logreg.__class__.__name__+" average log_loss is %2.3f" % -scores_log_loss.mean())
+print(logreg.__class__.__name__+" average auc is %2.3f" % scores_auc.mean())
 
 
 # In[ ]:
 
 
-# from sklearn.model_selection import ShuffleSplit
-# from sklearn import svm
-# n_samples = X.shape[0]
-# clf = svm.SVC(kernel='linear', C=1)
-# cv = ShuffleSplit(n_splits=10, test_size=0.3, random_state=0)
-# cross_val_score(clf, X, y, cv=cv)
-# print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+#have not run this one
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import mean_squared_error
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+X = codalab_data.iloc[:, 3:23].values
+Y = codalab_data.iloc[:,2].values
+label_encoder_Y = LabelEncoder()
+Y = label_encoder_Y.fit_transform(Y)
+
+kfold = KFold(n_splits=10, random_state=105,shuffle=True)
+model = LogisticRegression()
+results = cross_val_score(model, X, Y, cv=kfold,scoring='accuracy')
+print("Accuracy in each split:",results)
+print("Accuracy:", results.mean())
+print("Accuracy: %.3f%% (%.3f%%)" % (results.mean()*100.0, results.std()*100.0))
+
+
+# In[33]:
+
+
+# have not executed this one
+
+from sklearn.model_selection import KFold
+from sklearn.model_selection import cross_val_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import mean_squared_error
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+X = codalab_data.iloc[:, 3:8].values
+Y = codalab_data.iloc[:,2].values
+label_encoder_Y = LabelEncoder()
+Y = label_encoder_Y.fit_transform(Y)
+
+kf=KFold(n_splits=10)
+splits=kf.split(X)
+
+for train_index, test_index in splits:
+    print(len(train_index),len(test_index))
+    
+
+rfr = RandomForestRegressor(n_estimators=25, random_state=1111)
+errors=[]
+for train_index, val_index in splits:
+    X_train, y_train = X[train_index], y[train_index]
+    X_val, y_val = X[val_index], y[val_index]
+
+    rfr.fit(X_train, y_train)
+    predictions = rfr.predict(X_test)
+    print("Split accuracy: " + str(mean_squared_error(y_val, predictions)))
+# Access the training and validation indices of splits
+
+    
+    #model = LogisticRegression()
+    #results = cross_val_score(model, X, Y, cv=kfold)
+    #print("Accuracy: %.3f%% (%.3f%%)" % (results.mean()*100.0, results.std()*100.0))
+    #print(len(X_val),len(y_val))
+    # Fit the random forest model
+    #
+    # Make predictions, and print the accuracy
+    #predictions = rfc.predict(X_val)
+    
+
+
+# In[33]:
+
+
+from sklearn.model_selection import ShuffleSplit
+from sklearn import svm
+n_samples = X.shape[0]
+clf = svm.SVC(kernel='linear', C=1)
+cv = ShuffleSplit(n_splits=10, test_size=0.3, random_state=0)
+scores = cross_val_score(clf, X, y, cv=cv)
+print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
+
+
+# In[ ]:
+
+
+
 

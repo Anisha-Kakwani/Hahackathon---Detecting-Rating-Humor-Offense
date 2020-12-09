@@ -20,12 +20,15 @@ import statistics
 
 df = pd.read_csv("Codalab-train-dataset.csv")
 texts = df.iloc[:, 1]
-labels = df.iloc[:, 4]
+from sklearn.impute import SimpleImputer 
+constant_imputer=SimpleImputer(strategy='constant', fill_value=0)
+df.iloc[:]=constant_imputer.fit_transform(df)
+labels = df.iloc[:, 3]
 
 # texts, test_examples, labels, test_labels = train_test_split(X,Y, test_size=0.2,random_state=0)
 
 # Tokenizing the data
-maxlen = 100 # cut off sentences after 50 words
+maxlen = 300 # cut off sentences after 50 words
 max_words = 10000 # only consider top 10000 common words in dataset
 
 tokenizer = Tokenizer(num_words=max_words)
@@ -53,7 +56,7 @@ labels = labels[indices]
 
 embeddings_index = {}
 
-f = open('glove.6B.100d.txt',"r", encoding="utf-8",)
+f = open('numberbatch-en-19.08.txt.gz',"r", encoding="utf-8",)
 for line in f:
      values = line.split()
      word = values[0]
@@ -64,7 +67,7 @@ f.close()
 print('Found %s word vectors:'%len(embeddings_index))
 
 # preparing glove word embeddings matrix
-embedding_dim = 100
+embedding_dim = 300
 
 embedding_matrix = np.zeros((max_words, embedding_dim))
 for word, i in word_index.items():
@@ -73,19 +76,19 @@ for word, i in word_index.items():
     if embedding_vector is not None:
       embedding_matrix[i] = embedding_vector # for words not in embedding index values will be zeros
       
-model = Sequential()
-model.add(Embedding(max_words, embedding_dim, input_length=maxlen))
-model.add(Flatten())
+# model = Sequential()
+# model.add(Embedding(max_words, embedding_dim, input_length=maxlen))
+# model.add(Flatten())
 
-model.add(Dense(64, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dropout(0.3)) # adding regularization
+# model.add(Dense(64, activation='relu'))
+# model.add(Dense(64, activation='relu'))
+# model.add(Dropout(0.3)) # adding regularization
 
-model.add(Dense(1, activation='sigmoid'))
-model.summary()
+# model.add(Dense(1, activation='sigmoid'))
+# model.summary()
 
-model.layers[0].set_weights([embedding_matrix])
-model.layers[0].trainable = False
+# model.layers[0].set_weights([embedding_matrix])
+# model.layers[0].trainable = False
 
 def f1(y_true, y_pred):
     def recall(y_true, y_pred):
@@ -117,8 +120,8 @@ def f1(y_true, y_pred):
     recall = recall(y_true, y_pred)
     return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
-model.compile(optimizer=RMSprop(lr=1e-4), loss='binary_crossentropy', metrics = ['acc', f1])
-history = model.fit(data, labels, epochs=20, batch_size=32, validation_split=0.1)
+# model.compile(optimizer=RMSprop(lr=1e-4), loss='binary_crossentropy', metrics = ['acc', f1])
+# history = model.fit(data, labels, epochs=20, batch_size=32, validation_split=0.1)
 
 def plot_result(history):
   acc = history.history['acc']
@@ -158,7 +161,7 @@ def plot_result(history):
   plt.show()
   
   
-print("Accuracy", statistics.mean(history.history['acc']))
+# print("Accuracy", statistics.mean(history.history['acc']))
 test_dataset = pd.read_csv("Codalab-test-dataset.csv")
 test_examples = test_dataset.iloc[:, 1]
 tokenizer.fit_on_texts(test_examples)
@@ -167,9 +170,9 @@ sequences_test = tokenizer.texts_to_sequences(test_examples)
 
 # padding the sequences
 data_test = pad_sequences(sequences_test, maxlen=maxlen)
-test_labels = model.predict(data_test)
-# plotting the results
-plot_result(history)
+# test_labels = model.predict(data_test)
+# # plotting the results
+# plot_result(history)
 
 
 # model = Sequential()
@@ -186,6 +189,7 @@ plot_result(history)
 # history = model.fit(data, labels, epochs=20, batch_size=32, validation_split=0.1)
 
 # print("Accuracy", statistics.mean(history.history['acc']))
+# test_labels = model.predict(data_test)
 # plot_result(history)
 
 # model = Sequential()
@@ -208,6 +212,7 @@ plot_result(history)
 # model.compile(optimizer=RMSprop(lr=1e-4), loss='binary_crossentropy', metrics=['acc', f1])
 # history = model.fit(data, labels, epochs=20, batch_size=32, validation_split=0.1)
 # print("Accuracy", statistics.mean(history.history['acc']))
+# test_labels = model.predict(data_test)
 # plot_result(history)
 
 # model = Sequential()
@@ -226,6 +231,7 @@ plot_result(history)
 # model.compile(optimizer=RMSprop(lr=1e-4), loss='binary_crossentropy', metrics=['acc', f1])
 # history = model.fit(data, labels, epochs=20, batch_size=32, validation_split=0.1)
 # print("Accuracy", statistics.mean(history.history['acc']))
+# test_labels = model.predict(data_test)
 # plot_result(history)
 
 # model = Sequential()
@@ -242,6 +248,7 @@ plot_result(history)
 # model.compile(optimizer=RMSprop(lr=1e-4), loss='binary_crossentropy', metrics=['acc', f1])
 # history = model.fit(data, labels, epochs=20, batch_size=32, validation_split=0.1)
 # print("Accuracy", statistics.mean(history.history['acc']))
+# test_labels = model.predict(data_test)
 # plot_result(history)
 
 # model = Sequential()
@@ -255,20 +262,24 @@ plot_result(history)
 # model.compile(optimizer=RMSprop(lr=1e-4), loss='binary_crossentropy', metrics=['acc', f1])
 # history = model.fit(data, labels, epochs=20, batch_size=32, validation_split=0.1)
 # print("Accuracy", statistics.mean(history.history['acc']))
+# test_labels = model.predict(data_test)
 # plot_result(history)
 
-# model = Sequential()
-# model.add(Embedding(max_words, 32))
-# model.add(Conv1D(32, 5, activation='relu'))
-# model.add(MaxPooling1D(5))
-# model.add(Conv1D(64, 5, activation='relu'))
-# model.add(MaxPooling1D(5))
-# model.add(GRU(32, activation='relu', dropout=0.1, recurrent_dropout=0.5, return_sequences=True))
-# model.add(GRU(64, activation='relu', dropout=0.1, recurrent_dropout=0.5))
-# model.add(Dense(1, activation='sigmoid'))
-# model.summary()
+model = Sequential()
+model.add(Embedding(max_words, 32))
+model.add(Conv1D(32, 5, activation='relu'))
+model.add(MaxPooling1D(5))
+model.add(Conv1D(64, 5, activation='relu'))
+model.add(MaxPooling1D(5))
+model.add(GRU(32, activation='relu', dropout=0.1, recurrent_dropout=0.5, return_sequences=True))
+model.add(GRU(64, activation='relu', dropout=0.1, recurrent_dropout=0.5))
+model.add(Dense(1, activation='sigmoid'))
+model.summary()
 
-# model.compile(optimizer=RMSprop(lr=1e-4), loss='binary_crossentropy', metrics=['acc', f1])
-# history = model.fit(data, labels, epochs=20, batch_size=32, validation_split=0.1)
-# print("Accuracy", statistics.mean(history.history['acc']))
-# plot_result(history)
+model.compile(optimizer=RMSprop(lr=1e-4), loss='mean_absolute_error', metrics=['acc', f1])
+history = model.fit(data, labels, epochs=20, batch_size=32, validation_split=0.1)
+print("Accuracy", statistics.mean(history.history['acc']))
+test_labels = model.predict_classes(data_test)
+for i in range(len(test_labels)):
+    test_labels[i] = test_labels[i]*10
+plot_result(history)

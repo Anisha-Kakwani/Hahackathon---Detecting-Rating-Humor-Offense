@@ -19,7 +19,7 @@ This is the training dataset with 8000 records. In this data, we had 6 columns: 
 
 ### Test.csv: 
 This is the training dataset with 1000 records. In this data, we had 2 columns: **ID**, **Text**
-
+%  
 ## EDA:
 
 ![1](https://github.com/Anisha-Kakwani/Hahackathon---Detecting-Rating-Humor-Offense/blob/punitMashruwala-patch-1_readme/Images/Picture1.png?raw=true)
@@ -32,4 +32,22 @@ This is the training dataset with 1000 records. In this data, we had 2 columns: 
 
 
 ![4](https://github.com/Anisha-Kakwani/Hahackathon---Detecting-Rating-Humor-Offense/blob/punitMashruwala-patch-1_readme/Images/Picture4.png?raw=true)
+
+
+##  **Machine Learning :**
+
+For detecting Sarcasm on the given dataset, we started by creating model using **Linear SVC** approach and **Naive Bayes**.
+Linear SVC model gave accuracy of **58.3%** and Naive Bayes model gave accuracy of **79.3%**.
+Later on we decided to start  experimenting with TensorFlow model and we tried various model like **ColBERT**, **LSTM**, **wordEmbedding** with 4 layer model and one **without wordEmbedding** , and **GRU** . 
+Among all this ColBERT gave the highest accuracy of **92.75%** in predicting if text is humor or not.
+GRU gave **63.7%** accuracy, LSTM provided accuracy of **76%** and NN model with Word Embedding gave accuracy of **83.5%** .
+
+## **Known Issues**:
+-   We had only 8000 training data to train the model, which is little less to provide better accuracy.
+-   We had to deal with lot of missing data.
+
+## **Future Work**:
+
+Here as we see accuracy of 83.%5 in neural network model, we can work more on that model (boost the model) and also we can fine tune ColBERT model and try to get more accuracy.
+
 

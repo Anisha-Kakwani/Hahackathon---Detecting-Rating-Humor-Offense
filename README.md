@@ -22,14 +22,14 @@ This is the training dataset with 1000 records. In this data, we had 2 columns: 
 
 ## EDA:
 
-![1](https://github.com/Anisha-Kakwani/Hahackathon---Detecting-Rating-Humor-Offense/blob/punitMashruwala-patch-1_readme/Images/Picture1.pngraw=true)
+![1](https://github.com/Anisha-Kakwani/Hahackathon---Detecting-Rating-Humor-Offense/blob/punitMashruwala-patch-1_readme/Images/Picture1.png?raw=true)
 
 
-![2](https://github.com/Anisha-Kakwani/Hahackathon---Detecting-Rating-Humor-Offense/blob/punitMashruwala-patch-1_readme/Images/Picture2.pngraw=true)
+![2](https://github.com/Anisha-Kakwani/Hahackathon---Detecting-Rating-Humor-Offense/blob/punitMashruwala-patch-1_readme/Images/Picture2.png?raw=true)
 
 
-![3](https://github.com/Anisha-Kakwani/Hahackathon---Detecting-Rating-Humor-Offense/blob/punitMashruwala-patch-1_readme/Images/Picture3.pngraw=true)
+![3](https://github.com/Anisha-Kakwani/Hahackathon---Detecting-Rating-Humor-Offense/blob/punitMashruwala-patch-1_readme/Images/Picture3.png?raw=true)
 
 
-![4](https://github.com/Anisha-Kakwani/Hahackathon---Detecting-Rating-Humor-Offense/blob/punitMashruwala-patch-1_readme/Images/Picture4.pngraw=true)
+![4](https://github.com/Anisha-Kakwani/Hahackathon---Detecting-Rating-Humor-Offense/blob/punitMashruwala-patch-1_readme/Images/Picture4.png?raw=true)
 

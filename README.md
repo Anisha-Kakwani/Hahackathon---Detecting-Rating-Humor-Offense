@@ -39,9 +39,6 @@ This is the training dataset with 1000 records. In this data, we had 2 columns: 
 - Among all this ColBERT gave the highest accuracy of **91.5%** in predicting if text is humor or not.
 - GRU gave **63.7%** accuracy, LSTM provided accuracy of **76%** and NN model with Word Embedding gave accuracy of **83.5%** .
 
-## **Known Issues**:
--   We had only 8000 training data to train the model, which is little less to provide better accuracy.
--   We had to deal with lot of missing data.
 
 ## **Future Work**:
 

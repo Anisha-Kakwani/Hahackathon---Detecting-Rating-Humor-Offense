@@ -10,7 +10,7 @@ We have created two Model which is used to predict whether the text is humorous,
  https://competitions.codalab.org/competitions/27446
 
 ##  **Data understanding :**
-CodaLab has provided training and test datasetsin Train.csv and public_dev.csv respectively. 
+CodaLab has provided training and test datasetsin Train.csv and Test.csv respectively. 
 ### Train.csv: 
 This is the training dataset with 8000 records. In this data, we had 6 columns: **ID**, **Text**, **is_humor**, **humor_rating**, **humor_controversy**, **offense_rating**
 
@@ -36,7 +36,7 @@ This is the training dataset with 1000 records. In this data, we had 2 columns: 
 - For detecting Sarcasm on the given dataset, we started by creating model using **Linear SVC** approach and **Naive Bayes**.
 - Linear SVC model gave accuracy of **58.3%** and Naive Bayes model gave accuracy of **79.3%**.
 - Later on we decided to start  experimenting with TensorFlow model and we tried various model like **ColBERT**, **LSTM**, **wordEmbedding** with 4 layer model and one **without wordEmbedding** , and **GRU** . 
-- Among all this ColBERT gave the highest accuracy of **92.75%** in predicting if text is humor or not.
+- Among all this ColBERT gave the highest accuracy of **91.5%** in predicting if text is humor or not.
 - GRU gave **63.7%** accuracy, LSTM provided accuracy of **76%** and NN model with Word Embedding gave accuracy of **83.5%** .
 
 ## **Known Issues**:
@@ -45,7 +45,7 @@ This is the training dataset with 1000 records. In this data, we had 2 columns: 
 
 ## **Future Work**:
 
-Here as we see accuracy of 83.%5 in neural network model, we can work more on that model (boost the model) and also we can fine tune ColBERT model and try to get more accuracy.
+Here as we see accuracy of **83.5%** in neural network model, we can work more on that model (boost the model) and also we can fine tune ColBERT model and try to get more accuracy.
 
 ## Reference:
 

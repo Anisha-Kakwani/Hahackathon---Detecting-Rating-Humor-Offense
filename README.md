@@ -2,9 +2,9 @@
 
 ## **Introduction:**
 
-Humor, like most figurative language, poses interesting linguistic challenges to NLP, due to its emphasis on multiple word senses, cultural knowledge, and pragmatic competence. Humor is an essential but most fascinating element in personal communication.
-In this project, we worked on a dataset with labels and ratings from a balanced set of age groups from 18-70.
-We have created two Model which is used to predict whether the text is humorous, if it is humorous, what is the humor rating and humor controversy whereas if the text is offensive, how offensive it is.
+- Humor, like most figurative language, poses interesting linguistic challenges to NLP, due to its emphasis on multiple word senses, cultural knowledge, and pragmatic competence. Humor is an essential but most fascinating element in personal communication.
+- In this project, we worked on a dataset with labels and ratings from a balanced set of age groups from 18-70.
+- We have created two Model which is used to predict whether the text is humorous, if it is humorous, what is the humor rating and humor controversy whereas if the text is offensive, how offensive it is.
 
 ## **Relevant Domain Information:**
  https://competitions.codalab.org/competitions/27446
